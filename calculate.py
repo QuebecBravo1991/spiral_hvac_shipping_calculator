@@ -1,6 +1,10 @@
 # import pandas library as pd
 import pandas as pd
 
+TRAILER_HEIGHT = 90
+TRAILER_WIDTH = 98
+TRAILER_DEPTH = 53
+
 class Spiral_Pipe:
     def __init__(self, diameter,  length, gauge) -> None:
        self.diameter = diameter
@@ -40,11 +44,16 @@ def collect_pipe(data_frame):
             # find the gauge
             ga_index = current_cell.index('ga')
             gauge = int(current_cell[ga_index - 2:ga_index]) 
-    
-
-            pipe = Spiral_Pipe(diameter, length, gauge)
-
-            pipes.append(pipe)
+   
+            # create a pipe for each stick
+            i = length
+            while (i > 5):
+                pipe = Spiral_Pipe(diameter, 10, gauge)
+                pipes.append(pipe)
+                i -= 10
+            if i == 5:
+                pipe = Spiral_Pipe(diameter, 5, gauge)
+                pipes.append(pipe)
 
     return pipes
 
@@ -63,8 +72,12 @@ def round_up_to_5(num):
     return ret_val
 
 def print_pipe(pipes):
+    print("The following pipe(s) were found: ")
+
     for pipe in pipes:
         print(pipe)
+
+
 
 data_frame = read_file()
 pipes = collect_pipe(data_frame)
