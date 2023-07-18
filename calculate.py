@@ -1,5 +1,6 @@
 # import pandas library as pd
 import pandas as pd
+import time
 
 TRAILER_HEIGHT = 90
 TRAILER_WIDTH = 98
@@ -164,3 +165,7 @@ pipes = collect_pipe(data_frame)
 pipes = sort_pipe(pipes)
 print_pipe(pipes)
 pack_pipe(pipes)
+
+
+while True:
+    time.sleep(2)
