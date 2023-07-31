@@ -22,14 +22,14 @@ def read_file():
         file_name = input()
         # create data frame from the file
         try:
-            data_frame = pd.read_excel(file_name, sheet_name='Sheet1')
+            data_frame = pd.read_excel(repr(file_name)[1:-1], sheet_name='Estimate')
             return data_frame
         except FileNotFoundError:
             print("\nNo such file found. Did you spell it right? Is it in the right folder?\n")
 
 
 def collect_pipe(data_frame):
-    names = data_frame['Name']
+    names = data_frame.iloc[:, 2]
     names_length = len(names)
    
     pipes = []
@@ -37,13 +37,16 @@ def collect_pipe(data_frame):
     for i in range(names_length):
         current_cell = names[i]
 
+        if type(current_cell) != str:
+            continue
+
         if ("Spiral Pipe" in current_cell):
             # find the diameter of the pipe
             inch_index = current_cell.index('"')
             diameter = int(current_cell[:inch_index])
 
             # find the length
-            length = round_up_to_5(data_frame.iloc[i]['Qty']) 
+            length = round_up_to_5(data_frame.iloc[i, 0]) 
 
             # find the gauge
             ga_index = current_cell.index('ga')
