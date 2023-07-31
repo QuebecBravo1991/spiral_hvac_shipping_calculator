@@ -22,7 +22,7 @@ def read_file():
         file_name = input()
         # create data frame from the file
         try:
-            data_frame = pd.read_excel(repr(file_name)[1:-1], sheet_name='Estimate')
+            data_frame = pd.read_excel(repr(file_name[1:-1])[1:-1], sheet_name='Estimate')
             return data_frame
         except FileNotFoundError:
             print("\nNo such file found. Did you spell it right? Is it in the right folder?\n")
