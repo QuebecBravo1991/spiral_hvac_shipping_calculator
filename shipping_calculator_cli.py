@@ -1,17 +1,10 @@
 # import pandas library as pd
 import pandas as pd
 import time
-import gi
 
-TRAILER_HEIGHT = 90
-TRAILER_WIDTH = 98
-TRAILER_DEPTH = 53
-
-# create a subclass of the standard gtk window
-class MyWindow(Gtk.Window):
-    def __init__(self):
-        super().__init__(title="Roll Calculator")
-
+TRAILER_HEIGHT = 98
+TRAILER_WIDTH = 92
+TRAILER_DEPTH = 10000000
 
 class Spiral_Pipe:
     def __init__(self, diameter,  length, gauge) -> None:
@@ -175,12 +168,6 @@ pipes = collect_pipe(data_frame)
 pipes = sort_pipe(pipes)
 print_pipe(pipes)
 pack_pipe(pipes)
-
-
-win = MyWindow()
-win.connect("destroy", Gtk.main_quit)
-win.show_all()
-Gtk.main()
 
 
 while True:

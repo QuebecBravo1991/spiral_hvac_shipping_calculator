@@ -3,15 +3,49 @@ import pandas as pd
 import time
 import gi
 
-TRAILER_HEIGHT = 90
-TRAILER_WIDTH = 98
-TRAILER_DEPTH = 53
+# get only gtk3 from the system
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+
+
+TRAILER_HEIGHT = 98
+TRAILER_WIDTH = 92
+TRAILER_DEPTH = 1000000000
 
 # create a subclass of the standard gtk window
 class MyWindow(Gtk.Window):
     def __init__(self):
-        super().__init__(title="Roll Calculator")
+        super().__init__(title="Shipping Calculator")
 
+        # add the vertical box that holds all the horizontal boxes
+        self.vbox1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add(self.vbox1)
+
+        self.file_button =  Gtk.Button(label="Select estimate file")
+        self.file_button.connect("clicked", self.on_file_clicked)
+        self.vbox1.pack_start(self.file_button, True, True, 0)
+
+    def on_file_clicked(self, widget):
+        dialog = Gtk.FileChooserDialog("Select the estimate file", self, Gtk.FileChooserAction.OPEN,("Cancel", Gtk.ResponseType.CANCEL,"OK", Gtk.ResponseType.OK))
+
+        response = dialog.run()
+        
+        if response == Gtk.ResponseType.OK:
+            print("You clicked the OK button")
+        
+            data_frame = read_file((dialog.get_filename()))
+            pipes = collect_pipe(data_frame)
+            pipes = sort_pipe(pipes)
+            #print_pipe(pipes)
+            
+            self.output_lable = Gtk.Label(label = pack_pipe(pipes))
+            self.vbox1.pack_start(self.output_lable, True, True, 0)
+
+            self.show_all()
+        elif response == Gtk.ResponseType.CANCEL:
+            print("User didn't choose any file")
+
+        dialog.destroy()
 
 class Spiral_Pipe:
     def __init__(self, diameter,  length, gauge) -> None:
@@ -22,17 +56,12 @@ class Spiral_Pipe:
     def __str__(self):
         return f"Diameter: {self.diameter} Length: {self.length} Gauge: {self.gauge}"
 
-def read_file():
-    while True:
-        # get the file name
-        print("Please input the name of the file you wish to caclulate from: ")
-        file_name = input()
-        # create data frame from the file
-        try:
-            data_frame = pd.read_excel(repr(file_name[1:-1])[1:-1], sheet_name='Estimate')
-            return data_frame
-        except FileNotFoundError:
-            print("\nNo such file found. Did you spell it right? Is it in the right folder?\n")
+def read_file(file_name):
+    try:
+        data_frame = pd.read_excel(file_name, sheet_name='Estimate')
+        return data_frame
+    except FileNotFoundError:
+        print("\nNo such file found. Did you spell it right? Is it in the right folder?\n")
 
 
 def collect_pipe(data_frame):
@@ -157,7 +186,7 @@ def pack_pipe(pipes):
     
         pipes.pop(0)
 
-    print("The width is: " + str(dimensions[0]) + "\" The height is: " + str(dimensions[1])  + "\" The depth is " + str(dimensions[2]) + "\'")
+    return "The width is: " + str(dimensions[0]) + "\" The height is: " + str(dimensions[1])  + "\" The depth is " + str(dimensions[2]) + "\'"
 
 
 def print_pipe(pipes):
@@ -168,20 +197,7 @@ def print_pipe(pipes):
 
     print()
 
-
-
-data_frame = read_file()
-pipes = collect_pipe(data_frame)
-pipes = sort_pipe(pipes)
-print_pipe(pipes)
-pack_pipe(pipes)
-
-
 win = MyWindow()
 win.connect("destroy", Gtk.main_quit)
 win.show_all()
 Gtk.main()
-
-
-while True:
-    time.sleep(2)
